@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ljt.exam.mapper.PostMapper">
+    <resultMap id="BaseResultMap" type="com.ljt.exam.model.Post" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="author_id" property="authorId" jdbcType="INTEGER" />
+        <result column="html_content" property="htmlContent" jdbcType="LONGVARCHAR" />
+        <result column="text_content" property="textContent" jdbcType="LONGVARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="last_reply_time" property="lastReplyTime" jdbcType="TIMESTAMP" />
+        <result column="reply_num" property="replyNum" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="insertPost" parameterType="com.ljt.exam.model.Post">
+        insert  into t_penguin_post
+         (author_id, title, html_content, text_content)
+        values (#{post.authorId}, #{post.title}, #{post.htmlContent}, #{post.textContent})
+    </insert>
+
+    <update id="updatePostById" parameterType="com.ljt.exam.model.Post">
+        UPDATE  t_penguin_post
+        set
+        title = #{title}, html_content = #{post.htmlContent}, text_content = #{post.textContent}
+         WHERE
+        id = #{post.id}
+    </update>
+
+    <select id="getPostById" resultMap="BaseResultMap" parameterType="int">
+        select
+        *
+        from t_penguin_post
+        where id = #{id}
+    </select>
+
+    <delete id="deletePostById" parameterType="int">
+        delete from t_penguin_post
+        where id=#{id}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM t_penguin_post
+    </select>
+
+    <select id="getPosts" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM t_penguin_post
+        ORDER BY last_reply_time desc ,update_time desc ,create_time desc
+
+    </select>
+
+    <update id="updateReplyNumById">
+        UPDATE t_penguin_post
+        set
+         reply_num = reply_num + 1, last_reply_time = #{lastReplyTime}
+        WHERE
+        id = #{id}
+    </update>
+
+    <select id="getCountByAuthorId" resultType="int">
+        select
+        count(1)
+        from t_penguin_post
+        where author_id = #{authorId}
+    </select>
+
+    <select id="getPostsByAuthorId" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM t_penguin_post
+        where author_id = #{authorId}
+        order BY last_reply_time desc ,update_time desc ,create_time DESC
+    </select>
+
+</mapper>
